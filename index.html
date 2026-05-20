@@ -465,7 +465,7 @@
 
   page6.addEventListener('mousemove', e => {
     const rect = page6.getBoundingClientRect();
-    // Normalised mouse position: –0.5 to +0.5 relative to page centre
+    // Normalized mouse position: -0.5 to +0.5 relative to page center
     const rx = (e.clientX - rect.left)  / rect.width  - 0.5;
     const ry = (e.clientY - rect.top)   / rect.height - 0.5;
 

@@ -1,0 +1,497 @@
+/* ================================================================
+   FORMKUNST — BRUTALIST DESIGN SYSTEM
+   COLOR SYSTEM: #000000 | #FFDE00 | #FFFFFF
+   ================================================================ */
+
+:root {
+  --black  : #000000;
+  --yellow : #FFDE00;
+  --white  : #FFFFFF;
+  --mono   : 'Courier New', Courier, monospace;
+}
+
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: var(--black);
+  color: var(--white);
+}
+
+/* ================================================================
+   CANVAS OVERLAY
+   ================================================================ */
+
+#particle-canvas {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 900;
+}
+
+/* ================================================================
+   NAVIGATION DOTS
+   ================================================================ */
+
+#page-nav {
+  position: fixed;
+  right: 1.4rem;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  z-index: 600;
+}
+
+.nav-dot {
+  width: 7px;
+  height: 7px;
+  background: var(--white);
+  opacity: 0.35;
+  cursor: pointer;
+  transition: opacity 0.25s, transform 0.25s, background 0.25s;
+  outline: none;
+}
+
+.nav-dot:hover,
+.nav-dot.active {
+  opacity: 1;
+  background: var(--yellow);
+  transform: scale(1.7);
+}
+
+/* ================================================================
+   SCROLL CONTAINER + PAGES
+   ================================================================ */
+
+#scroll-container {
+  width: 100%;
+  height: 100vh;
+  overflow-y: scroll;
+  scroll-snap-type: y mandatory;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+
+#scroll-container::-webkit-scrollbar { width: 2px; }
+#scroll-container::-webkit-scrollbar-track { background: var(--black); }
+#scroll-container::-webkit-scrollbar-thumb { background: var(--yellow); }
+
+.page {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  scroll-snap-align: start;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 5vw 7vw 5vw 7vw;
+  overflow: hidden;
+  border-bottom: 2px solid var(--yellow);
+}
+
+/* Page counter top-right */
+.page-tag {
+  position: absolute;
+  top: 1.6rem;
+  right: 2.2rem;
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.45em;
+  color: var(--yellow);
+  text-transform: uppercase;
+}
+
+/* ================================================================
+   TYPOGRAPHY — SHARED
+   ================================================================ */
+
+.phase-label {
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.55em;
+  color: var(--yellow);
+  text-transform: uppercase;
+  margin-bottom: 1.1rem;
+}
+
+.page-title {
+  font-family: 'Arial Black', 'Arial Bold', Arial, Helvetica, sans-serif;
+  font-size: clamp(2rem, 4.5vw, 4rem);
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  line-height: 1.0;
+  color: var(--white);
+  margin-bottom: 1.8rem;
+}
+
+.page-title .hl { color: var(--yellow); }
+
+.sub-label {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.35em;
+  color: var(--white);
+  text-transform: uppercase;
+  border-left: 4px solid var(--yellow);
+  padding-left: 1rem;
+  margin-bottom: 2rem;
+  opacity: 0.7;
+}
+
+.body-text {
+  font-family: var(--mono);
+  font-size: clamp(0.75rem, 1.05vw, 0.88rem);
+  line-height: 1.78;
+  color: var(--white);
+  opacity: 0.82;
+  max-width: 62ch;
+  margin-bottom: 1.1rem;
+}
+
+.body-text:last-of-type { margin-bottom: 0; }
+
+.y-rule {
+  width: 100%;
+  max-width: 36rem;
+  height: 2px;
+  background: var(--yellow);
+  margin: 1.6rem 0;
+}
+
+.thin-rule {
+  width: 100%;
+  max-width: 36rem;
+  height: 1px;
+  background: var(--yellow);
+  opacity: 0.25;
+  margin: 1.2rem 0;
+}
+
+/* ================================================================
+   QUOTE BLOCKS
+   ================================================================ */
+
+.quote-block {
+  border-left: 5px solid var(--yellow);
+  padding: 0.9rem 1.4rem;
+  margin: 1.4rem 0;
+  background: rgba(255,222,0,0.04);
+  max-width: 60ch;
+}
+
+.quote-block p {
+  font-family: var(--mono);
+  font-size: clamp(0.72rem, 0.95vw, 0.82rem);
+  line-height: 1.75;
+  color: var(--white);
+  font-style: italic;
+  opacity: 0.9;
+}
+
+.quote-block cite {
+  display: block;
+  margin-top: 0.65rem;
+  font-size: 0.6rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--yellow);
+  font-style: normal;
+}
+
+.heidegger-block {
+  position: relative;
+  border: 1px solid var(--yellow);
+  border-left: 5px solid var(--white);
+  padding: 0.9rem 1.4rem;
+  margin: 1.4rem 0;
+  max-width: 60ch;
+}
+
+.heidegger-block::before {
+  content: 'HEIDEGGER';
+  position: absolute;
+  top: -0.52rem;
+  right: 1rem;
+  background: var(--black);
+  color: var(--yellow);
+  font-family: var(--mono);
+  font-size: 0.55rem;
+  letter-spacing: 0.3em;
+  padding: 0 0.4rem;
+}
+
+.heidegger-block p {
+  font-family: var(--mono);
+  font-size: clamp(0.72rem, 0.95vw, 0.82rem);
+  line-height: 1.75;
+  color: var(--white);
+  font-style: italic;
+  opacity: 0.9;
+}
+
+/* ================================================================
+   PAGE 1 — CORE AXIOM
+   ================================================================ */
+
+#core-axiom {
+  font-family: 'Arial Black', 'Arial Bold', Arial, Helvetica, sans-serif;
+  font-size: clamp(3rem, 8.5vw, 7.5rem);
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: -0.025em;
+  line-height: 0.92;
+  color: var(--yellow);
+  cursor: pointer;
+  display: inline-block;
+  user-select: none;
+  position: relative;
+  transition: opacity 0.08s;
+}
+
+#core-axiom:hover { opacity: 0.85; }
+
+#core-axiom .detonation-hint {
+  display: block;
+  font-family: var(--mono);
+  font-size: clamp(0.45rem, 0.75vw, 0.62rem);
+  letter-spacing: 0.55em;
+  color: var(--white);
+  opacity: 0.4;
+  margin-top: 0.6rem;
+  font-weight: 400;
+}
+
+#core-axiom.detonated {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* ================================================================
+   PAGE 2 — REIBUNG
+   ================================================================ */
+
+.reibung-bg {
+  position: absolute;
+  right: 2vw;
+  bottom: 2vh;
+  font-family: 'Arial Black', Arial, sans-serif;
+  font-size: clamp(6rem, 16vw, 13rem);
+  font-weight: 900;
+  color: var(--yellow);
+  opacity: 0.06;
+  text-transform: uppercase;
+  letter-spacing: -0.04em;
+  pointer-events: none;
+  z-index: 0;
+  line-height: 1;
+}
+
+/* ================================================================
+   PAGE 3 — ALLTAGS SYNTHESIS
+   ================================================================ */
+
+.grid-stripe {
+  display: flex;
+  gap: 3px;
+  max-width: 28rem;
+  margin: 1.5rem 0;
+}
+
+.grid-stripe span {
+  flex: 1;
+  height: 4px;
+  background: var(--yellow);
+}
+
+.grid-stripe span:nth-child(even) {
+  background: var(--white);
+  opacity: 0.25;
+}
+
+/* ================================================================
+   PAGE 4 — MINDFUL MANIPULATION
+   ================================================================ */
+
+.tool-list {
+  list-style: none;
+  margin: 1.4rem 0;
+  max-width: 50ch;
+}
+
+.tool-list li {
+  font-family: var(--mono);
+  font-size: clamp(0.72rem, 0.95vw, 0.85rem);
+  line-height: 1.6;
+  color: var(--white);
+  padding: 0.45rem 0 0.45rem 1.6rem;
+  border-bottom: 1px solid rgba(255,222,0,0.15);
+  position: relative;
+}
+
+.tool-list li::before {
+  content: '▶';
+  position: absolute;
+  left: 0;
+  color: var(--yellow);
+  font-size: 0.6rem;
+  top: 0.55rem;
+}
+
+/* ================================================================
+   PAGE 5 — UNREALIZED CONTEXT
+   ================================================================ */
+
+.unfinished-stamp {
+  position: absolute;
+  top: 50%;
+  right: 6vw;
+  transform: translateY(-50%) rotate(-12deg);
+  font-family: 'Arial Black', Arial, sans-serif;
+  font-size: clamp(2rem, 4vw, 3.5rem);
+  font-weight: 900;
+  color: transparent;
+  border: 6px solid var(--yellow);
+  padding: 0.4rem 1rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  opacity: 0.18;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ================================================================
+   PAGE 6 — OVERLAPPING TEXT / SOCIAL PLASTIC
+   ================================================================ */
+
+#page-6 {
+  padding: 0;
+  overflow: hidden;
+  cursor: crosshair;
+}
+
+.p6-header {
+  position: absolute;
+  top: 1.6rem;
+  left: 7vw;
+  z-index: 10;
+}
+
+.parallax-stage {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: var(--black);
+}
+
+.t-layer {
+  position: absolute;
+  font-family: 'Arial Black', 'Arial Bold', Arial, Helvetica, sans-serif;
+  font-weight: 900;
+  text-transform: uppercase;
+  white-space: nowrap;
+  line-height: 0.9;
+  will-change: transform;
+  pointer-events: none;
+}
+
+.t-layer-1 {
+  font-size: clamp(5rem, 11vw, 10rem);
+  color: var(--white);
+  top: 8%;
+  left: 3%;
+  letter-spacing: -0.03em;
+  mix-blend-mode: normal;
+}
+
+.t-layer-2 {
+  font-size: clamp(5rem, 11vw, 10rem);
+  color: var(--yellow);
+  top: 28%;
+  left: 8%;
+  letter-spacing: 0.04em;
+  mix-blend-mode: difference;
+}
+
+.t-layer-3 {
+  font-size: clamp(4rem, 9vw, 8rem);
+  color: var(--white);
+  top: 50%;
+  left: 2%;
+  letter-spacing: -0.04em;
+  mix-blend-mode: difference;
+}
+
+.t-layer-4 {
+  font-size: clamp(3rem, 7vw, 6rem);
+  color: var(--yellow);
+  top: 68%;
+  left: 15%;
+  letter-spacing: 0.08em;
+  mix-blend-mode: difference;
+}
+
+.t-layer-5 {
+  font-size: clamp(2rem, 4.5vw, 4rem);
+  color: var(--white);
+  top: 82%;
+  left: 5%;
+  letter-spacing: 0.18em;
+  mix-blend-mode: difference;
+  opacity: 0.55;
+}
+
+.p6-instruction {
+  position: absolute;
+  bottom: 1.8rem;
+  right: 2.2rem;
+  font-family: var(--mono);
+  font-size: 0.55rem;
+  letter-spacing: 0.35em;
+  color: var(--yellow);
+  text-transform: uppercase;
+  opacity: 0.5;
+  z-index: 10;
+}
+
+/* ================================================================
+   PAGE 7 — KINETIC DETONATION
+   ================================================================ */
+
+#page-7 {
+  background: var(--black);
+}
+
+.kinetic-headline {
+  font-family: 'Arial Black', 'Arial Bold', Arial, Helvetica, sans-serif;
+  font-size: clamp(1.6rem, 3.5vw, 3rem);
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--yellow);
+  margin-bottom: 1.6rem;
+  line-height: 1.1;
+}
+
+.epilog-mark {
+  position: absolute;
+  bottom: 2.5rem;
+  left: 7vw;
+  font-family: var(--mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.4em;
+  color: var(--yellow);
+  text-transform: uppercase;
+  opacity: 0.45;
+}

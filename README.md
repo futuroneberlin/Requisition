@@ -29,7 +29,7 @@ An investigation into the anthropological origin of creative output reveals that
 Over time, specialized sorting mechanisms introduced lines of demarcation, generating an artificial distance between the observer and the act of creation. The process-oriented approach operates as a parallel, complementary framework. It does not challenge existing typologies; it reinstates the baseline of unmediated participation, where the energy of the trajectory carries the weight of the form.
 
 PAGE 4: THE STRUCTURE OF MINDFUL MANIPULATION
-To sculpt without an object requires a calibrated set of alternative tools. When material substances like marble, bronze, or clay are set aside, the medium becomes the temporal structure of human interaction itself. The primary instruments of this methodology are Carefulness and Mindfulness (Liebevoll & Achtsam). These are not passive emotional states; they are rigorous, intentional parameters of spatial manipulation.
+To sculpt without an object requires a calibrated set of alternative tools. When material substances like marble, bronze, or clay are set aside, the medium becomes the temporal structure of human interaction itself. The primary instruments of this methodology are Carefulness and Mindfulness (Resonanzfläche). These are not passive emotional states; they are rigorous, intentional parameters of spatial manipulation.
 
 +---------------------------------------------------------+
 |  [ MATERIAL SHIFT ]                                     |

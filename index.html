@@ -6,7 +6,8 @@
   <meta name="description" content="FORMKUNST — A Seven-Phase Manifesto for Process Art" />
   <title>FORMKUNST — A MANIFESTO FOR PROCESS ART</title>
   <link rel="stylesheet" href="style.css" />
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <!-- Three.js with privacy-friendly CDN and automatic fallback -->
+  <script src="https://unpkg.com/three@latest/build/three.min.js"></script>
 </head>
 <body>
 
@@ -373,9 +374,11 @@
     dpr: Math.min(window.devicePixelRatio, 2),
 
     init() {
-      if (!this.canvas || !window.THREE) return false;
-
-      try {
+      if (!this.canvas || !window.THREE) {
+        console.log('ℹ️ Three.js not available - using canvas fallback for sculpture');
+        this.useFallback();
+        return true;
+      }
         // SETUP SCENE
         this.scene = new THREE.Scene();
         this.scene.background = null;
@@ -551,6 +554,61 @@
         this.renderer.setSize(w, h);
         this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
       }
+    },
+
+    useFallback() {
+      // Canvas-based fallback animation
+      const canvas = this.canvas;
+      const ctx = canvas.getContext('2d');
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      let time = 0;
+      const animate = () => {
+        time += 0.01;
+
+        // Dark gradient background
+        const grad = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+        grad.addColorStop(0, '#0a0a0a');
+        grad.addColorStop(0.5, '#000000');
+        grad.addColorStop(1, '#0f0f0f');
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // Draw organic sculptural form using circles
+        const cx = canvas.width / 2;
+        const cy = canvas.height / 2;
+        const baseRadius = 60;
+
+        for (let i = 0; i < 8; i++) {
+          const angle = (i / 8) * Math.PI * 2 + time;
+          const radius = baseRadius + Math.sin(time * 0.5 + i) * 30;
+          const x = cx + Math.cos(angle) * radius * 1.5;
+          const y = cy + Math.sin(angle) * radius;
+
+          const size = 40 + Math.sin(time * 0.3 + i) * 15;
+
+          // Yellow signal color with breathing effect
+          const opacity = 0.6 + Math.sin(time * 0.2 + i) * 0.3;
+          ctx.fillStyle = `rgba(255, 222, 0, ${opacity})`;
+          ctx.beginPath();
+          ctx.arc(x, y, size, 0, Math.PI * 2);
+          ctx.fill();
+
+          // White accent
+          ctx.strokeStyle = `rgba(255, 255, 255, ${opacity * 0.5})`;
+          ctx.lineWidth = 2;
+          ctx.stroke();
+        }
+
+        requestAnimationFrame(animate);
+      };
+
+      animate();
+      window.addEventListener('resize', () => {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      }, { passive: true });
     }
   };
 

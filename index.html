@@ -6,6 +6,7 @@
   <meta name="description" content="FORMKUNST — A Seven-Phase Manifesto for Process Art" />
   <title>FORMKUNST — A MANIFESTO FOR PROCESS ART</title>
   <link rel="stylesheet" href="style.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
 <body>
 
@@ -30,8 +31,17 @@
   </nav>
 
   <!-- ════════════════════════════════════════════════════════════════════════
-       MAIN MANIFESTO
+       HERO SECTION — MONUMENTAL 3D SCULPTURAL FORM
        ════════════════════════════════════════════════════════════════════════ -->
+  <section id="hero" aria-label="FORMKUNST sculptural monument">
+    <canvas id="sculpture-canvas" aria-hidden="true"></canvas>
+    <div class="hero-content">
+      <h1 class="hero-title">FORMKUNST</h1>
+      <p class="hero-subtitle">A Living Monument to Process</p>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════════════════════════════════════
   <main id="main">
 
     <!-- ─────────────────────────────────────────────────────────────────────
@@ -277,9 +287,281 @@
 
 
   <!-- ════════════════════════════════════════════════════════════════════════
+       3D SCULPTURAL MONUMENT SYSTEM
+       ════════════════════════════════════════════════════════════════════ -->
+  <script>
+  'use strict';
+
+  // ════════════════════════════════════════════════════════════════════════
+  // SIMPLEX NOISE GENERATOR — For organic deformation
+  // ════════════════════════════════════════════════════════════════════════
+
+  const SimplexNoise = {
+    permutation: [
+      151, 160, 137, 91, 90, 15, 131, 13, 201, 95, 96, 53, 194, 233, 7, 225,
+      140, 36, 103, 30, 69, 142, 8, 99, 37, 240, 21, 10, 23, 190, 6, 148,
+      247, 120, 234, 75, 0, 26, 197, 62, 94, 252, 219, 203, 117, 35, 11, 32,
+      57, 177, 33, 88, 237, 149, 56, 87, 174, 20, 125, 136, 171, 168, 68, 175,
+      74, 165, 71, 134, 139, 48, 27, 166, 77, 146, 158, 231, 83, 111, 229, 122,
+      60, 211, 133, 230, 206, 39, 142, 9, 99, 2, 210, 189, 34, 242, 245, 127,
+      50, 111, 138, 11, 120, 92, 35, 284, 173, 212, 65, 143, 168, 241, 142, 36,
+      119, 65, 110, 95, 126, 196, 78, 161, 63, 243, 118, 156, 35, 35, 200, 116,
+      70, 213, 69, 68, 112, 213, 100, 73, 221, 123, 168, 102, 210, 155, 154, 159,
+      169, 160, 160, 96, 182, 143, 56, 76, 160, 169, 226, 121, 231, 200, 55, 109,
+      141, 213, 78, 169, 108, 86, 244, 234, 101, 122, 174, 8, 186, 120, 37, 46,
+      28, 166, 180, 198, 232, 221, 116, 31, 75, 189, 139, 138, 112, 62, 181, 102,
+      72, 3, 246, 97, 53, 87, 185, 134, 193, 29, 158, 225, 248, 152, 17, 105,
+      217, 142, 148, 155, 30, 135, 233, 206, 85, 40, 223, 140, 161, 137, 13, 191,
+      230, 66, 104, 153, 143, 70, 251, 167, 43, 172, 9, 129, 22, 39, 253, 19,
+      98, 108, 110, 79, 113, 224, 232, 178, 185, 112, 104, 218, 246, 97, 228, 251,
+      34, 242, 193, 238, 210, 144, 12, 191, 179, 162, 241, 81, 51, 145, 235, 249,
+      14, 239, 107, 49, 192, 214, 31, 155, 56, 235, 171, 99, 161, 99, 15, 221
+    ],
+    p: null,
+
+    buildPermutationTable() {
+      this.p = [];
+      for (let i = 0; i < 512; i++) {
+        this.p[i] = this.permutation[i % 256];
+      }
+    },
+
+    fade(t) { return t * t * t * (t * (t * 6 - 15) + 10); },
+    lerp(t, a, b) { return a + t * (b - a); },
+    grad(hash, x, y, z) {
+      const h = hash & 15;
+      const u = h < 8 ? x : y;
+      const v = h < 8 ? y : z;
+      return ((h & 1) === 0 ? u : -u) + ((h & 2) === 0 ? v : -v);
+    },
+
+    noise(x, y, z) {
+      if (!this.p) this.buildPermutationTable();
+      const X = Math.floor(x) & 255;
+      const Y = Math.floor(y) & 255;
+      const Z = Math.floor(z) & 255;
+      x -= Math.floor(x);
+      y -= Math.floor(y);
+      z -= Math.floor(z);
+      const u = this.fade(x);
+      const v = this.fade(y);
+      const w = this.fade(z);
+      const a = this.p[X] + Y, aa = this.p[a] + Z, ab = this.p[a + 1] + Z;
+      const b = this.p[X + 1] + Y, ba = this.p[b] + Z, bb = this.p[b + 1] + Z;
+      const l0 = this.lerp(u, this.grad(this.p[aa], x, y, z), this.grad(this.p[ba], x - 1, y, z));
+      const l1 = this.lerp(u, this.grad(this.p[ab], x, y - 1, z), this.grad(this.p[bb], x - 1, y - 1, z));
+      const l2 = this.lerp(u, this.grad(this.p[aa + 1], x, y, z - 1), this.grad(this.p[ba + 1], x - 1, y, z - 1));
+      const l3 = this.lerp(u, this.grad(this.p[ab + 1], x, y - 1, z - 1), this.grad(this.p[bb + 1], x - 1, y - 1, z - 1));
+      return this.lerp(w, this.lerp(v, l0, l1), this.lerp(v, l2, l3));
+    }
+  };
+
+  // ════════════════════════════════════════════════════════════════════════
+  // 3D SCULPTURE MONUMENT
+  // ════════════════════════════════════════════════════════════════════════
+
+  const SCULPTURE = {
+    canvas: document.getElementById('sculpture-canvas'),
+    scene: null,
+    camera: null,
+    renderer: null,
+    sculpture: null,
+    baseGeometry: null,
+    deformedPositions: null,
+    time: 0,
+    isVisible: true,
+    dpr: Math.min(window.devicePixelRatio, 2),
+
+    init() {
+      if (!this.canvas || !window.THREE) return false;
+
+      try {
+        // SETUP SCENE
+        this.scene = new THREE.Scene();
+        this.scene.background = null;
+        this.scene.fog = new THREE.Fog(0x000000, 50, 500);
+
+        // SETUP CAMERA
+        const w = window.innerWidth;
+        const h = window.innerHeight;
+        this.camera = new THREE.PerspectiveCamera(45, w / h, 0.1, 10000);
+        this.camera.position.z = 40;
+
+        // SETUP RENDERER
+        this.renderer = new THREE.WebGLRenderer({
+          canvas: this.canvas,
+          antialias: true,
+          alpha: true,
+          powerPreference: 'high-performance'
+        });
+        this.renderer.setSize(w, h);
+        this.renderer.setPixelRatio(this.dpr);
+        this.renderer.shadowMap.enabled = false;
+        this.renderer.outputColorSpace = THREE.SRGBColorSpace;
+
+        // CREATE SCULPTURE GEOMETRY
+        this.createSculpture();
+
+        // SETUP LIGHTING
+        this.setupLighting();
+
+        // HANDLE RESIZE
+        window.addEventListener('resize', () => this.onWindowResize(), { passive: true });
+
+        // INTERSECTION OBSERVER FOR VISIBILITY
+        const observer = new IntersectionObserver(entries => {
+          entries.forEach(entry => {
+            this.isVisible = entry.isIntersecting;
+          });
+        }, { threshold: 0.1 });
+        observer.observe(document.getElementById('hero'));
+
+        console.log('✓ 3D Sculpture initialized');
+        return true;
+      } catch (err) {
+        console.error('⚠️ Sculpture init error:', err);
+        return false;
+      }
+    },
+
+    createSculpture() {
+      // Create IcosahedronGeometry with high subdivision
+      this.baseGeometry = new THREE.IcosahedronGeometry(15, 5);
+      const geometry = this.baseGeometry.clone();
+
+      // Compute vertex normals for consistent deformation
+      geometry.computeVertexNormals();
+
+      // Create custom shader material
+      const material = new THREE.ShaderMaterial({
+        uniforms: {
+          time: { value: 0 },
+          colorShift: { value: 0 }
+        },
+        vertexShader: `
+          uniform float time;
+          
+          float noise(vec3 p) {
+            return sin(p.x * 0.5) * cos(p.y * 0.7) * sin(p.z * 0.3) +
+                   sin((p.x + p.y) * 0.3) * cos((p.y + p.z) * 0.4) * 0.5;
+          }
+          
+          void main() {
+            vec3 pos = position;
+            vec3 n = normalize(normal);
+            
+            float def1 = noise(pos * 0.3 + time * 0.3) * 0.8;
+            float def2 = noise(pos * 0.15 + time * 0.5) * 1.2;
+            float def3 = sin(time * 0.5 + length(pos) * 0.2) * 0.6;
+            
+            float breath = sin(time * 0.3) * 0.3 + 0.7;
+            
+            pos += n * (def1 + def2 + def3) * breath;
+            
+            gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
+          }
+        `,
+        fragmentShader: `
+          uniform float time;
+          uniform float colorShift;
+          
+          void main() {
+            vec3 color = mix(
+              vec3(1.0, 0.866, 0.0),
+              vec3(1.0, 1.0, 1.0),
+              sin(time * 0.4) * 0.5 + 0.5
+            );
+            
+            float alpha = 0.9;
+            gl_FragColor = vec4(color, alpha);
+          }
+        `,
+        wireframe: false,
+        side: THREE.DoubleSide,
+        transparent: true,
+        depthWrite: true
+      });
+
+      // Create sculpture mesh
+      this.sculpture = new THREE.Mesh(geometry, material);
+      this.sculpture.castShadow = true;
+      this.sculpture.receiveShadow = true;
+      this.scene.add(this.sculpture);
+    },
+
+    setupLighting() {
+      // Main directional light (cinematic)
+      const dirLight = new THREE.DirectionalLight(0xffffff, 0.7);
+      dirLight.position.set(30, 25, 20);
+      dirLight.castShadow = true;
+      dirLight.shadow.mapSize.width = 2048;
+      dirLight.shadow.mapSize.height = 2048;
+      dirLight.shadow.camera.near = 0.1;
+      dirLight.shadow.camera.far = 500;
+      this.scene.add(dirLight);
+
+      // Key light (signal color)
+      const keyLight = new THREE.PointLight(0xFFDE00, 0.5);
+      keyLight.position.set(-20, 15, 15);
+      this.scene.add(keyLight);
+
+      // Fill light (subtle)
+      const fillLight = new THREE.PointLight(0x4488ff, 0.3);
+      fillLight.position.set(20, -10, -20);
+      this.scene.add(fillLight);
+
+      // Ambient light
+      const ambient = new THREE.AmbientLight(0xffffff, 0.2);
+      this.scene.add(ambient);
+    },
+
+    update(deltaTime) {
+      if (!this.isVisible || !this.sculpture) return;
+
+      this.time += deltaTime * 0.001;
+
+      // Slow rotation
+      this.sculpture.rotation.x += 0.0002;
+      this.sculpture.rotation.y += 0.0003;
+
+      // Subtle wobble
+      this.sculpture.rotation.z = Math.sin(this.time * 0.2) * 0.05;
+
+      // Deformation pulse
+      if (this.sculpture.material.uniforms) {
+        this.sculpture.material.uniforms.time.value = this.time;
+      }
+    },
+
+    render() {
+      if (!this.isVisible || !this.renderer) return;
+      this.renderer.render(this.scene, this.camera);
+    },
+
+    onWindowResize() {
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+
+      if (this.camera) {
+        this.camera.aspect = w / h;
+        this.camera.updateProjectionMatrix();
+      }
+
+      if (this.renderer) {
+        this.renderer.setSize(w, h);
+        this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      }
+    }
+  };
+
+  </script>
+
+  <!-- ════════════════════════════════════════════════════════════════════════
        FORMKUNST ENGINE — Unified Runtime Stabilization System
        ════════════════════════════════════════════════════════════════════ -->
+  <script>
   'use strict';
+
 
   // ════════════════════════════════════════════════════════════════════════
   // FORMKUNST STABILIZED ENGINE — Simplified, Reliable, Semantic
@@ -606,10 +888,22 @@
   // ════════════════════════════════════════════════════════════════════════
 
   let running = false;
+  let lastFrameTime = performance.now();
 
   function mainLoop() {
+    const now = performance.now();
+    const deltaTime = now - lastFrameTime;
+    lastFrameTime = now;
+
     if (!CANVAS_SYS.ctx) return;
 
+    // Update and render 3D sculpture
+    if (SCULPTURE && SCULPTURE.update) {
+      SCULPTURE.update(deltaTime);
+      SCULPTURE.render();
+    }
+
+    // Update and render particles
     CANVAS_SYS.clear();
     PARTICLES.update();
     PARTICLES.render(CANVAS_SYS.ctx);
@@ -643,6 +937,9 @@
 
   window.addEventListener('load', () => {
     try {
+      // Initialize 3D Sculpture
+      SCULPTURE.init();
+      
       if (CANVAS_SYS.init() && CANVAS_SYS.ctx) {
         PAGE_NAV.init();
         PARALLAX.init();
